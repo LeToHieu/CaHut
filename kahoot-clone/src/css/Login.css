@@ -1,0 +1,87 @@
+.auth-page {
+    background-color: #fcfaf2;
+    background-image: url('../res/capy.png'); /* có thể dùng ảnh nền SVG lặp lại hoặc các icon bạn chọn */
+    background-repeat: repeat;
+    animation: floatIcons 40s linear infinite;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes floatIcons {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 100px 100px;
+    }
+  }
+  
+  .auth-box {
+    background: #e5e3db;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .auth-label {
+    margin-top: 1rem;
+    font-weight: bold;
+    display: block;
+  }
+  
+  .auth-input {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fffbeb;
+  }
+  
+  .auth-btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .auth-footer {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .auth-link {
+    color: #10b981;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .custom-toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background-color: #f87171;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .custom-toast.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  

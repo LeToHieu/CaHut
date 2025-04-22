@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Email không tồn tại' });
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ message: 'Mật khẩu sai' });
-    const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, username: user.username}, 'your_jwt_secret', { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
     res.status(500).json({ message: 'Lỗi server' });

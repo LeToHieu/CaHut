@@ -1,0 +1,106 @@
+.btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.quiz-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.quiz-card-join-room {
+  background-color: #ffa7a0;
+  border-radius: 30px;
+  flex: 80%;
+  min-width: 300px;
+  max-width: 1010px;
+  height: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem; /* Khoảng cách nhỏ giữa các phần tử */
+  flex-wrap: wrap; /* Cho phép xuống dòng nếu thiếu chỗ */
+  text-align: center;
+}
+
+.quiz-card {
+  background-color: #19444a;
+  color: #fffae6;
+  border-radius: 30px;
+  flex: 1 1 45%;
+  min-width: 300px;
+  max-width: 500px;
+  height: 170px;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-card-content {
+  font-weight: bold;
+  margin: auto;
+  text-align: center;
+}
+
+.quiz-button {
+  margin: 0.6rem auto;
+  color: #fffae6;
+  background-color: #33b98a;
+  font-weight: bold;
+  border-radius: 17px;
+  border: 3px solid black;
+  text-align: center;
+  height: 3rem;
+}
+
+.custom-table-container {
+  background-color: #dde3e9;
+  border-radius: 30px;
+  max-width: 1010px;
+  margin: 1rem auto;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.p-datatable {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #dde3e9;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+  padding: 1rem;
+  border-bottom: 1px solid #ad9d9d; /* Đường kẻ dưới mỗi dòng */
+}
+
+.p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none; /* Dòng cuối không cần đường kẻ */
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f1f7ff;
+}
+
+
+/* Responsive: full width when screen is small */
+@media (max-width: 600px) {
+  .quiz-card {
+    flex: 1 1 100%;
+  }
+}
