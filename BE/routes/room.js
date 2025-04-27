@@ -34,7 +34,7 @@ router.post('/create', authMiddleware, async (req, res) => {
       users: [req.userId], // Người tạo là thành viên đầu tiên
     });
     await room.save();
-    res.status(201).json({ message: 'Phòng đã được tạo', roomId });
+    res.status(201).json({ message: 'Phòng đã được tạo', roomId, room });
   } catch (err) {
     res.status(500).json({ message: 'Lỗi server', error: err.message });
   }

@@ -150,12 +150,12 @@ const EditExam = () => {
       />
 
       {/* Bảng hiển thị danh sách câu hỏi */}
-      <DataTable value={questions} tableStyle={{ minWidth: '50rem' }}>
-        <Column field="question" header="Câu hỏi" />
-        <Column field="options" header="Đáp án" body={(rowData) => rowData.options.join(', ')} />
-        <Column field="correctAnswer" header="Đáp án đúng" />
-        <Column field="timeLimit" header="Thời gian (giây)" />
-        <Column header="Hành động" body={actionTemplate} />
+      <DataTable value={questions} tableStyle={{ minWidth: '50rem' }} >
+        <Column field="question" header="Câu hỏi"   alignHeader="center" />
+        <Column field="options" header="Đáp án" body={(rowData) => rowData.options.join(', ')}   alignHeader="center"/>
+        <Column field="correctAnswer" header="Đáp án đúng"   alignHeader="center"/>
+        <Column field="timeLimit" header="Thời gian (giây)"  alignHeader="center"/>
+        <Column header="Hành động" body={actionTemplate}   alignHeader="center"/>
       </DataTable>
 
       {/* Modal thêm/sửa câu hỏi */}

@@ -164,18 +164,18 @@ const Quiz = () => {
         <Card title="Điểm số hiện tại">
           <h3>Bảng xếp hạng</h3>
           <DataTable value={showScores}>
-            <Column field="rank" header="Hạng" />
-            <Column field="username" header="Người chơi" />
-            <Column field="score" header="Điểm" />
+            <Column field="rank" header="Hạng"  alignHeader="center" />
+            <Column field="username" header="Người chơi"   alignHeader="center"/>
+            <Column field="score" header="Điểm"  alignHeader="center" />
           </DataTable>
         </Card>
       ) : leaderboard ? (
         <Card title="Kết quả thi">
           <h3>Bảng xếp hạng cuối cùng</h3>
           <DataTable value={leaderboard}>
-            <Column field="rank" header="Hạng" />
-            <Column field="username" header="Người chơi" />
-            <Column field="score" header="Điểm" />
+            <Column field="rank" header="Hạng"  alignHeader="center" />
+            <Column field="username" header="Người chơi"  alignHeader="center" />
+            <Column field="score" header="Điểm"  alignHeader="center" />
           </DataTable>
           <Button
             label="Về trang chủ"

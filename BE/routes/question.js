@@ -72,7 +72,7 @@ router.put('/edit/:questionId', authMiddleware, async (req, res) => {
         { new: true }
       );
       if (!updatedQuestion) return res.status(404).json({ message: 'Câu hỏi không tồn tại' });
-      res.json({ message: 'Câu hỏi đã được cập nhật', question: updatedQuestion });
+      res.status(201).json({ message: 'Câu hỏi đã được cập nhật', questionId: updatedQuestion._id });
     } catch (err) {
       res.status(500).json({ message: 'Lỗi server', error: err.message });
     }
