@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
+import '../css/Home.css'; // dùng lại CSS từ Login
 
 const EditExam = () => {
   const { examName, examId } = useParams();
@@ -18,7 +19,7 @@ const EditExam = () => {
     question: '',
     options: ['', '', '', ''],
     correctAnswer: '',
-    timeLimit: 30,
+    timeLimit: 15,
   });
 
   // Lấy danh sách câu hỏi khi trang tải
@@ -53,7 +54,7 @@ const EditExam = () => {
       question: '',
       options: ['', '', '', ''],
       correctAnswer: '',
-      timeLimit: 30,
+      timeLimit: 15,
     });
     setVisible(true);
   };
@@ -122,15 +123,15 @@ const EditExam = () => {
   // Template cho cột hành động
   const actionTemplate = (rowData) => {
     return (
-      <div>
+      <div className="action-buttons">
         <Button
           label="Sửa"
-          className="p-button-text"
+          className="btn-edit"
           onClick={() => openEditQuestionModal(rowData)}
         />
         <Button
           label="Xóa"
-          className="p-button-danger p-button-text"
+          className="btn-delete"
           onClick={() => handleDeleteQuestion(rowData._id)}
         />
       </div>
@@ -142,15 +143,17 @@ const EditExam = () => {
       <h2>Thêm câu hỏi vào đề: {examName}</h2>
 
       {/* Nút thêm câu hỏi */}
+      <div  style={{ textAlign: 'right' }}  >
       <Button
         label="Thêm câu hỏi"
         icon="pi pi-plus"
         onClick={openAddQuestionModal}
-        style={{ marginBottom: '20px' }}
+        style={{ marginBottom: '20px' ,marginLeft: '0.5rem', color: '#fffdf4', backgroundColor: '#33b98a', fontWeight: 'bold', borderRadius:'17px', borderColor: 'black', borderWidth: '3px', textAlign: 'center', height: '3rem'}}
       />
+      </div>
 
       {/* Bảng hiển thị danh sách câu hỏi */}
-      <DataTable value={questions} tableStyle={{ minWidth: '50rem' }} >
+      <DataTable value={questions} tableStyle={{ minWidth: '50rem', border: '1px black'}} >
         <Column field="question" header="Câu hỏi"   alignHeader="center" />
         <Column field="options" header="Đáp án" body={(rowData) => rowData.options.join(', ')}   alignHeader="center"/>
         <Column field="correctAnswer" header="Đáp án đúng"   alignHeader="center"/>
@@ -162,43 +165,90 @@ const EditExam = () => {
       <Dialog
         header={isEdit ? 'Sửa Câu Hỏi' : 'Thêm Câu Hỏi'}
         visible={visible}
-        style={{ width: '50vw' }}
+        style={{ width: '50vw', maxHeight: '90vh', overflowY: 'auto', borderRadius: '20px' }}
         onHide={() => setVisible(false)}
       >
-        <div>
+        <div style={{ padding: '1rem' }}>
+          {/* Nội dung câu hỏi */}
           <InputText
             value={currentQuestion.question}
             onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
-            placeholder="Nội dung câu hỏi"
-            style={{ width: '100%', marginBottom: '10px' }}
+            placeholder="Nhập nội dung câu hỏi..."
+            style={{ width: '100%', marginBottom: '1.5rem', fontWeight: 'bold'  ,flex: 1, borderRadius:'5px', border: '2px solid black', height: '3.5rem'}}
           />
-          {currentQuestion.options.map((option, index) => (
-            <InputText
-              key={index}
-              value={option}
-              onChange={(e) => {
-                const newOptions = [...currentQuestion.options];
-                newOptions[index] = e.target.value;
-                setCurrentQuestion({ ...currentQuestion, options: newOptions });
-              }}
-              placeholder={`Đáp án ${index + 1}`}
-              style={{ width: '100%', marginBottom: '10px' }}
+
+          {/* Danh sách đáp án */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            {currentQuestion.options.map((option, index) => (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  gap: '0.75rem',
+                }}
+              >
+                {/* Chọn đáp án đúng */}
+                <input
+                  type="radio"
+                  checked={currentQuestion.correctAnswer === option}
+                  onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: option })}
+                />
+
+                {/* Nhập nội dung đáp án */}
+                <InputText
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = [...currentQuestion.options];
+                    newOptions[index] = e.target.value;
+
+                    // Nếu đáp án này đang là đáp án đúng → cập nhật luôn
+                    let updatedCorrectAnswer = currentQuestion.correctAnswer;
+                    if (currentQuestion.correctAnswer === option) {
+                      updatedCorrectAnswer = e.target.value;
+                    }
+
+                    setCurrentQuestion({
+                      ...currentQuestion,
+                      options: newOptions,
+                      correctAnswer: updatedCorrectAnswer,
+                    });
+                  }}
+                  placeholder={`Đáp án ${String.fromCharCode(65 + index)}`}
+                  style={{ flex: 1, borderRadius:'10px', border: '1px solid black', height: '3rem'}}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Thời gian trả lời */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '1rem' }}>
+            <label style={{ fontWeight: 'bold' }}>Thời gian:</label>
+            <InputNumber
+              value={currentQuestion.timeLimit}
+              onValueChange={(e) => setCurrentQuestion({ ...currentQuestion, timeLimit: e.value })}
+              placeholder="Giây"
+              min={1}
+              max={300}
+              style={{border: '1px solid black'}}
             />
-          ))}
-          <InputText
-            value={currentQuestion.correctAnswer}
-            onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
-            placeholder="Đáp án đúng"
-            style={{ width: '100%', marginBottom: '10px' }}
-          />
-          <InputNumber
-            value={currentQuestion.timeLimit}
-            onValueChange={(e) => setCurrentQuestion({ ...currentQuestion, timeLimit: e.value })}
-            placeholder="Thời gian (giây)"
-            min={1}
-            style={{ width: '100%', marginBottom: '10px' }}
-          />
-          <Button label="Lưu" onClick={handleSaveQuestion} />
+            <span>giây</span>
+          </div>
+
+          {/* Nút Lưu */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <Button
+              label="Lưu Câu Hỏi"
+              onClick={handleSaveQuestion}
+              style={{
+                backgroundColor: '#00b074',
+                borderRadius: '20px',
+                fontWeight: 'bold',
+                color: 'white',
+              }}
+            />
+          </div>
         </div>
       </Dialog>
     </div>

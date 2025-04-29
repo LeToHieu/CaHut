@@ -47,11 +47,11 @@ router.post('/join', authMiddleware, async (req, res) => {
     const room = await Room.findOne({ roomId });
     if (!room) return res.status(404).json({ message: 'Phòng không tồn tại' });
     if (room.users.includes(req.userId)) {
-      return res.json({ message: 'Tham gia phòng thành công', roomId });
+      return res.json({ message: 'Tham gia phòng thành công', roomId, room });
     }
     room.users.push(req.userId);
     await room.save();
-    res.json({ message: 'Tham gia phòng thành công', roomId });
+    res.json({ message: 'Tham gia phòng thành công', roomId, room});
   } catch (err) {
     res.status(500).json({ message: 'Lỗi server', error: err.message });
   }

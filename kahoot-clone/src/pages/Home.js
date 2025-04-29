@@ -67,7 +67,7 @@ const Home = () => {
         console.error(data.message);
       }
     } catch (err) {
-      console.error('Lỗi khi lấy danh sách đề:', err);
+      console.error('Lỗi khi lấy danh sách Quiz:', err);
     }
   };
 
@@ -94,13 +94,13 @@ const Home = () => {
       setExamName(''); // Reset input
       if (response.ok) {
         fetchExams(token); // Cập nhật danh sách đề
-        toast.success("Lưu đề thành công!!!", { position: 'top-right', autoClose: 3000 });
+        toast.success("Lưu Quiz thành công!!!", { position: 'top-right', autoClose: 3000 });
       } else {
         toast.error(`Xẩy ra lỗi ${data.message}`, { position: 'top-right', autoClose: 3000 });
       }
     } catch (err) {
-      console.error('Lỗi khi lưu đề:', err);
-      toast.error(`Lỗi khi lưu đề: ${err}`, { position: 'top-right', autoClose: 3000 });
+      console.error('Lỗi khi lưu Quiz:', err);
+      toast.error(`Lỗi khi lưu Quiz: ${err}`, { position: 'top-right', autoClose: 3000 });
     }
   };
 
@@ -117,44 +117,44 @@ const Home = () => {
       const data = await response.json();
       if (response.ok) {
         fetchExams(token); // Cập nhật lại danh sách sau khi xóa
-        toast.success("Xóa đề thành công!!!", { position: 'top-right', autoClose: 3000 });
+        toast.success("Xóa Quiz thành công!!!", { position: 'top-right', autoClose: 3000 });
       } else {
         toast.error(data.message, { position: 'top-right', autoClose: 3000 });
       }
     } catch (err) {
-      console.error('Lỗi khi xóa đề:', err);
+      console.error('Lỗi khi xóa Quiz:', err);
     }
   };
 
   // Nút chỉnh sửa và xóa trong bảng
   const actionTemplate = (rowData) => {
     return (
-      <div>
-        <Button
-          label="Sửa tên"
-          className="p-button-text"
-          onClick={() => openEditExamModal(rowData)}
-        />
+      <div className="action-buttons">
+    <Button
+      label="Sửa tên"
+      className="btn-edit"
+      onClick={() => openEditExamModal(rowData)}
+    />
 
-        <Button
-          label="Thêm câu hỏi"
-          className="p-button-text"
-          onClick={() => navigate(`/edit-exam/${rowData.examName}/${rowData._id}`)}
-        />
+    <Button
+      label="Thêm câu hỏi"
+      className="btn-add"
+      onClick={() => navigate(`/edit-exam/${rowData.examName}/${rowData._id}`)}
+    />
 
-        <Button
-          label="Xóa"
-          className="p-button-danger p-button-text"
-          onClick={() => handleDeleteExam(rowData._id)}
-        />
-      </div>
+    <Button
+      label="Xóa"
+      className="btn-delete"
+      onClick={() => handleDeleteExam(rowData._id)}
+    />
+  </div>
     );
   };
 
   // Hàm tạo phòng
   const handleCreateRoom = async () => {
     if (!selectedExam) {
-      toast.warn("Vui lòng chọn một đề thi!", { position: 'top-right', autoClose: 3000 });
+      toast.warn("Vui lòng chọn một Quiz", { position: 'top-right', autoClose: 3000 });
       return;
     }
     const token = localStorage.getItem('token');
@@ -239,7 +239,7 @@ const Home = () => {
   return (
     <>
       <Menubar start={start} end={end}  style={{backgroundColor: '#fffdf4', position: 'fixed', width: '100%', zIndex: '1000', top: '0', left: '0'}}/>
-      <div style={{padding: '20px', height: '10000px', marginTop: '3rem', backgroundColor: '#fffdf4'}}>
+      <div style={{padding: '20px', marginTop: '3rem'}}>
         <h2 style={{textAlign: 'center'}}>Chào mừng {username} quay trở lại trang chủ!</h2>
 
         <div className="quiz-container">
@@ -276,7 +276,7 @@ const Home = () => {
               </div>
               <Button
                 className="quiz-button"
-                label="Tạo đề"
+                label="Tạo Quiz"
                 icon="pi pi-plus"
                 onClick={() => openAddExamModal()}
               />
@@ -288,26 +288,29 @@ const Home = () => {
 
         <div className="custom-table-container">
           <DataTable value={exams} tableStyle={{ width: '100%' }}>
-            <Column field="examName" header="Tên Đề" alignHeader="center"/>
+            <Column field="examName" header="Tên Quiz" alignHeader="center"/>
             <Column header="Hành động" body={actionTemplate} alignHeader="center"/>
           </DataTable>
         </div>
 
         {/* Modal tạo đề */}
         <Dialog
-          header={isEdit ? 'Sửa Tên Đề' : 'Tạo Đề Mới'}
+          header={isEdit ? 'Sửa Tên Quiz' : 'Tạo Quiz'}
           visible={visible}
           style={{ width: '50vw' }}
           onHide={() => setVisible(false)}
         >
           <div>
             <InputText
+              className='dialog-input-text'
               value={examName}
               onChange={(e) => setExamName(e.target.value)}
-              placeholder="Nhập tên đề"
+              placeholder="Nhập tên Quiz"
               style={{ width: '100%', marginBottom: '10px' }}
             />
-            <Button label="Tạo" onClick={handleSaveExam} />
+            <div style={{ textAlign: 'right' }}>
+              <Button label={isEdit ? 'Sửa Quiz' :"Tạo Quiz"} onClick={handleSaveExam} />
+            </div>
           </div>
         </Dialog>
 
@@ -315,14 +318,17 @@ const Home = () => {
         <Dialog header="Tạo Phòng" visible={roomVisible} style={{ width: '50vw' }} onHide={() => setRoomVisible(false)}>
           <div>
             <Dropdown
+              className='dialog-input-text'
               value={selectedExam}
               options={exams}
               onChange={(e) => setSelectedExam(e.value)}
               optionLabel="examName"
-              placeholder="Chọn đề thi"
+              placeholder="Chọn quiz"
               style={{ width: '100%', marginBottom: '10px' }}
             />
-            <Button label="Tạo phòng" onClick={handleCreateRoom} />
+             <div style={{ textAlign: 'right' }}>
+                <Button label="Tạo phòng" onClick={handleCreateRoom} />
+              </div>
           </div>
         </Dialog>
 

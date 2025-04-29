@@ -9,9 +9,11 @@ import Quiz from './pages/Quiz';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import './css/Login.css';
 
 const App = () =>{
     return (
+    <div className="float-background" style={{width: '100%'}}>
         <Router>
             <Routes>
                 <Route path="/" element={<Login />} />
@@ -23,6 +25,7 @@ const App = () =>{
                 <Route path="/room/:roomId" element={<Room />} />
             </Routes>
         </Router>
+    </div>
     );
 }
 

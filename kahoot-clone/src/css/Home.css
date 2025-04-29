@@ -63,7 +63,6 @@
 }
 
 .custom-table-container {
-  background-color: #dde3e9;
   border-radius: 30px;
   max-width: 1010px;
   margin: 1rem auto;
@@ -72,30 +71,46 @@
 }
 
 .p-datatable {
+  border: 2px solid black;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   overflow: hidden;
 }
 
+/* Header của bảng */
 .p-datatable .p-datatable-thead > tr > th {
-  background-color: #dde3e9;
+  background-color: #ccc9c2;
   font-weight: bold;
   text-align: center;
   border: none;
 }
 
+/* Dòng bình thường */
 .p-datatable .p-datatable-tbody > tr > td {
   text-align: center;
   padding: 1rem;
-  border-bottom: 1px solid #ad9d9d; /* Đường kẻ dưới mỗi dòng */
+  border-bottom: 1px solid #ad9d9d;
 }
 
+/* Không cần border dòng cuối */
 .p-datatable .p-datatable-tbody > tr:last-child > td {
-  border-bottom: none; /* Dòng cuối không cần đường kẻ */
+  border-bottom: none;
 }
 
+/* Hover khi di chuột */
 .p-datatable .p-datatable-tbody > tr:hover {
   background-color: #f1f7ff;
 }
+
+/* ⚡️ Màu zebra: dòng lẻ và dòng chẵn khác màu */
+.p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+  background-color: #f2eee6;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #ccc9c2;
+}
+
 
 
 /* Responsive: full width when screen is small */
@@ -103,4 +118,205 @@
   .quiz-card {
     flex: 1 1 100%;
   }
+}
+
+/* ==================== TÙY CHỈNH CHO DIALOG ==================== */
+.p-dialog {
+  border-radius: 30px; /* Bo tròn dialog */
+  overflow: hidden;
+  background-color: #fffdf4; /* Nền màu giống màn chính */
+}
+
+.p-dialog .p-dialog-header {
+  background-color: #fffdf4;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  border-bottom: 2px solid black;
+}
+
+.p-dialog-content {
+  padding-top: 2rem;
+  background-color: #fffdf4;
+}
+
+.p-dialog-footer {
+  background-color: #fffdf4;
+  text-align: center;
+}
+
+/* ==================== INPUT & DROPDOWN TRONG DIALOG ==================== */
+.dialog-input-text {
+  width: 100%;
+  border-radius: 17px;
+  padding: 0.75rem;
+  border: 3px solid black;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ==================== BUTTON TRONG DIALOG ==================== */
+.p-dialog .p-button {
+  background-color: #ffc679;
+  border: 3px solid black;
+  border-radius: 17px;
+  color: fffae6;
+  font-weight: bold;
+  height: 3rem;
+  margin-top: 1rem;
+}
+
+/* Nếu muốn căn giữa nút trong Dialog */
+.p-dialog-footer .p-button {
+  margin: 0 auto;
+  display: block;
+}
+
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem; /* Khoảng cách giữa các nút */
+}
+
+/* Nút chung */
+.action-buttons .p-button {
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  border: 2px solid black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Sửa tên */
+.btn-edit {
+  background-color: #ffc679; /* Cam nhạt */
+  color: black;
+}
+
+.btn-edit:hover {
+  background-color: #e6a954;
+}
+
+/* Thêm câu hỏi */
+.btn-add {
+  background-color: #33b98a; /* Xanh ngọc */
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #28a17a;
+}
+
+/* Xóa */
+.btn-delete {
+  background-color: #ff6b6b; /* Đỏ nhạt */
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #e85050;
+}
+
+.quiz-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.quiz-question {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.quiz-timer {
+  font-size: 1.5rem;
+  color: #f97316;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  margin-top: 2rem;
+}
+
+.quiz-option-button {
+  padding: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 20px;
+  border: 3px solid black;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.quiz-option-button:hover {
+  transform: scale(1.05);
+}
+
+/* Màu cho từng đáp án */
+.option-a {
+  background-color: #60a5fa;
+  color: white;
+}
+
+.option-b {
+  background-color: #34d399;
+  color: white;
+}
+
+.option-c {
+  background-color: #facc15;
+  color: black;
+}
+
+.option-d {
+  background-color: #f87171;
+  color: white;
+}
+
+
+.result-table {
+  width: 100%;
+  max-width: 700px;
+  margin: 2rem auto;
+  font-size: 1.2rem;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+}
+
+.result-table .p-datatable-thead > tr > th,
+.result-table .p-datatable-tbody > tr > td {
+  text-align: center;
+  font-weight: bold;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+}
+
+.result-table .p-datatable-thead {
+  background-color: #ffe699;
+}
+
+.card-background {
+  width: 80%;
+  background-color: #fffdf4;
+  border-radius: 2rem;
+  max-width: 200rem;
+  margin: 2rem auto;
+  font-size: 1.2rem;
+  border-radius: 20px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
 }

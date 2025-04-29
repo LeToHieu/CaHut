@@ -1,8 +1,12 @@
+.float-background {
+  background-color: #fcfaf2;
+  background-image: url('../res/capy.png'); /* có thể dùng ảnh nền SVG lặp lại hoặc các icon bạn chọn */
+  background-repeat:initial;
+  animation: floatIcons 300s  linear infinite;
+  min-height: 100vh;
+}
+
 .auth-page {
-    background-color: #fcfaf2;
-    background-image: url('../res/capy.png'); /* có thể dùng ảnh nền SVG lặp lại hoặc các icon bạn chọn */
-    background-repeat: repeat;
-    animation: floatIcons 40s linear infinite;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -11,10 +15,10 @@
 
   @keyframes floatIcons {
     from {
-      background-position: 0 0;
+      background-position: 20rem 20rem;
     }
     to {
-      background-position: 100px 100px;
+      background-position: 500rem 500rem;
     }
   }
   

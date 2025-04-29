@@ -1,34 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
 import { Button } from 'primereact/button';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import {jwtDecode} from 'jwt-decode';
-import { toast, ToastContainer } from 'react-toastify'; // Thêm Toastify
-import 'react-toastify/dist/ReactToastify.css'; // CSS của Toastify
+import { toast, ToastContainer } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
+import io from 'socket.io-client';
+import 'react-toastify/dist/ReactToastify.css';
+import '../css/Home.css'; // Dùng lại Home.css chung
 
 const socket = io('http://localhost:5000');
 
 const Room = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const [roomCode, setRoomCode] = useState(roomId);
   const [users, setUsers] = useState([]);
-  const [userCount, setUserCount] = useState(0);
   const [isCreator, setIsCreator] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) navigate('/login');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
 
     socket.emit('join-room', { roomId, token });
 
     socket.on('room-update', (data) => {
-      console.log('Room update:', data);
       setUsers(data.users || []);
-      setUserCount(data.users ? data.users.length : 0);
       const decoded = jwtDecode(token);
       setIsCreator(decoded.id === data.creatorId);
     });
@@ -36,10 +34,7 @@ const Room = () => {
     socket.on('game-started', () => {
       setGameStarted(true);
       navigate(`/quiz/${roomId}`);
-      toast.success('Trò chơi đã bắt đầu!', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.success('Trò chơi đã bắt đầu!', { position: 'top-right', autoClose: 3000 });
     });
 
     socket.on('room-deleted', () => {
@@ -47,10 +42,7 @@ const Room = () => {
     });
 
     socket.on('error', (data) => {
-      toast.error(data.message, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.error(data.message, { position: 'top-right', autoClose: 3000 });
       navigate('/home');
     });
 
@@ -62,10 +54,9 @@ const Room = () => {
     };
   }, [roomId, navigate]);
 
-  const handleLeaveRoom = () => {
+  const handleStartGame = () => {
     const token = localStorage.getItem('token');
-    socket.emit('leave-room', { roomId, token });
-    navigate('/home', { state: { showToast: true, toastMessage: 'Bạn đã rời phòng!', toastType: 'info' } });
+    socket.emit('start-game', { roomId, token });
   };
 
   const handleDeleteRoom = () => {
@@ -74,50 +65,54 @@ const Room = () => {
     navigate('/home', { state: { showToast: true, toastMessage: 'Phòng đã bị xóa!', toastType: 'info' } });
   };
 
-  const handleStartGame = () => {
+  const handleLeaveRoom = () => {
     const token = localStorage.getItem('token');
-    socket.emit('start-game', { roomId, token });
+    socket.emit('leave-room', { roomId, token });
+    navigate('/home', { state: { showToast: true, toastMessage: 'Bạn đã rời phòng!', toastType: 'info' } });
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Sảnh chờ</h2>
-      <p>Mã phòng: <strong>{roomCode}</strong></p>
-      <p>Số người trong phòng: <strong>{userCount}</strong></p>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ backgroundColor: '#19444a', padding: '2rem', borderRadius: '24px', width: '90%', maxWidth: '400px', textAlign: 'center', color: 'white' }}>
+        <h1 style={{ fontSize: '2rem', color: '#fffae6', marginBottom: '0.5rem' }}>Bạn đã tham gia với mã PIN:</h1>
+        <h2 style={{ fontSize: '3rem', color: '#98ff90', margin: '1rem 0' }}>{roomId}</h2>
 
-      <h3>Danh sách người dùng trong phòng:</h3>
-      <DataTable value={users} tableStyle={{ minWidth: '30rem' }}>
-        <Column field="username" header="Tên người dùng" />
-      </DataTable>
+        <p style={{ marginBottom: '1.5rem', fontSize: '1rem' }}>{users.length} người chơi</p>
 
-      {isCreator && !gameStarted && (
-        <>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
+          {users.map((user, idx) => (
+            <div key={idx} style={{ backgroundColor: '#00b074', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold' }}>
+              {user.username}
+            </div>
+          ))}
+        </div>
+
+        {isCreator && !gameStarted ? (
+          <>
+            <Button
+              label="Bắt đầu"
+              className="quiz-button"
+              style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#00b074', borderColor: 'black', borderRadius: '20px' }}
+              onClick={handleStartGame}
+            />
+            <Button
+              label="Xóa phòng"
+              className="quiz-button"
+              style={{ width: '100%', backgroundColor: '#f87171', borderColor: 'black', borderRadius: '20px' }}
+              onClick={handleDeleteRoom}
+            />
+          </>
+        ) : (
           <Button
-            label="Start Game"
-            icon="pi pi-play"
-            onClick={handleStartGame}
-            style={{ marginTop: '20px', marginRight: '10px' }}
+            label="Thoát phòng"
+            className="quiz-button"
+            style={{ width: '100%', backgroundColor: '#f59e0b', borderColor: 'black', borderRadius: '20px' }}
+            onClick={handleLeaveRoom}
           />
-          <Button
-            label="Xóa phòng"
-            icon="pi pi-trash"
-            className="p-button-danger"
-            onClick={handleDeleteRoom}
-            style={{ marginTop: '20px', marginRight: '10px' }}
-          />
-        </>
-      )}
+        )}
+      </div>
 
-      {!isCreator && (
-        <Button
-          label="Thoát phòng"
-          icon="pi pi-sign-out"
-          onClick={handleLeaveRoom}
-          style={{ marginTop: '20px' }}
-        />
-      )}
-
-      <ToastContainer /> {/* Thêm ToastContainer để hiển thị toast */}
+      <ToastContainer />
     </div>
   );
 };
