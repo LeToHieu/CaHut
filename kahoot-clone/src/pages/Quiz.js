@@ -9,6 +9,7 @@ import { Column } from 'primereact/column';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from 'jwt-decode';
+import '../css/Home.css'; // Dùng lại Home.css chung
 
 const socket = io('http://localhost:5000');
 
@@ -128,7 +129,7 @@ const Quiz = () => {
   useEffect(() => {
     if (countdown !== null && countdown > 0) {
       const timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
+        setCountdown((prev) => Math.max(0, prev - 1));
       }, 1000);
       return () => clearInterval(timer);
     }
@@ -211,6 +212,17 @@ const Quiz = () => {
     return userEntry ? userEntry.score : 0;
   };
 
+  if (loading) {
+    return (
+      <div className="quiz-page">
+        <Card style={{ textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
+          <ProgressSpinner />
+          <p>Đang tải...</p>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="quiz-page">
       <ToastContainer />
@@ -227,8 +239,22 @@ const Quiz = () => {
         )
       ) : question ? (
         <>
-          <div className="quiz-question">{question.question}</div>
-          <div className="quiz-timer">⏳ Thời gian còn lại: {timeLeft} giây</div>
+          <div className="quiz-container">
+            <div className="quiz-content">
+              <div className="quiz-text">
+                <div className="quiz-question">{question.question}</div>
+                <div className="quiz-timer">⏳ Thời gian còn lại: {timeLeft} giây</div>
+              </div>
+              {question.type === 'image' && question.imageUrl && (
+                <div className="quiz-image">
+                  <img
+                    src={`http://localhost:5000${question.imageUrl}`}
+                    alt="Question"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
           <div className="quiz-options">
             {question.options.map((option, index) => (
               <button
@@ -254,7 +280,20 @@ const Quiz = () => {
         </>
       ) : showResults ? (
         <>
-          <div className="quiz-question">{showResults.question}</div>
+        <div className="quiz-container">
+          <div className="quiz-content">
+            <div className="quiz-text">
+              <div className="quiz-question">{showResults.question}</div>
+            </div>
+            {showResults.type === 'image' && showResults.imageUrl && (
+            <div className="quiz-image">
+              <img
+                src={`http://localhost:5000${showResults.imageUrl}`}
+                alt="Question"/>
+              </div>
+            )}
+            </div>
+          </div>
           <div className="quiz-options">
             {showResults.options.map((option, index) => (
               <button

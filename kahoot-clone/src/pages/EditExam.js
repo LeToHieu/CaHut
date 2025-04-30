@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -6,30 +6,32 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
-import '../css/Home.css'; // dùng lại CSS từ Login
+import { Dropdown } from 'primereact/dropdown';
+import '../css/Home.css';
 
 const EditExam = () => {
   const { examName, examId } = useParams();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
-  const [visible, setVisible] = useState(false); // Hiển thị modal thêm/sửa
-  const [isEdit, setIsEdit] = useState(false); // Xác định đang thêm hay sửa
+  const [visible, setVisible] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState({
     _id: null,
     question: '',
     options: ['', '', '', ''],
     correctAnswer: '',
     timeLimit: 15,
+    type: 'normal',
+    imageUrl: null,
   });
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Lấy danh sách câu hỏi khi trang tải
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) navigate('/login');
     fetchQuestions(token);
   }, [examId, navigate]);
 
-  // Hàm lấy danh sách câu hỏi
   const fetchQuestions = async (token) => {
     try {
       const response = await fetch(`http://localhost:5000/api/question/get/${examId}`, {
@@ -46,7 +48,6 @@ const EditExam = () => {
     }
   };
 
-  // Mở modal để thêm câu hỏi
   const openAddQuestionModal = () => {
     setIsEdit(false);
     setCurrentQuestion({
@@ -55,18 +56,20 @@ const EditExam = () => {
       options: ['', '', '', ''],
       correctAnswer: '',
       timeLimit: 15,
+      type: 'normal',
+      imageUrl: null,
     });
+    setSelectedImage(null);
     setVisible(true);
   };
 
-  // Mở modal để sửa câu hỏi
   const openEditQuestionModal = (rowData) => {
     setIsEdit(true);
     setCurrentQuestion({ ...rowData });
+    setSelectedImage(null);
     setVisible(true);
   };
 
-  // Xử lý thêm hoặc sửa câu hỏi
   const handleSaveQuestion = async () => {
     const token = localStorage.getItem('token');
     const url = isEdit
@@ -74,25 +77,28 @@ const EditExam = () => {
       : 'http://localhost:5000/api/question/create';
     const method = isEdit ? 'PUT' : 'POST';
 
+    const formData = new FormData();
+    formData.append('examId', examId);
+    formData.append('question', currentQuestion.question);
+    formData.append('options', JSON.stringify(currentQuestion.options));
+    formData.append('correctAnswer', currentQuestion.correctAnswer);
+    formData.append('timeLimit', currentQuestion.timeLimit);
+    formData.append('type', currentQuestion.type);
+    if (selectedImage) {
+      formData.append('image', selectedImage);
+    }
+
     try {
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          examId,
-          question: currentQuestion.question,
-          options: currentQuestion.options,
-          correctAnswer: currentQuestion.correctAnswer,
-          timeLimit: currentQuestion.timeLimit,
-        }),
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData,
       });
       const data = await response.json();
       if (response.ok) {
         setVisible(false);
-        fetchQuestions(token); // Cập nhật lại danh sách
+        setSelectedImage(null);
+        fetchQuestions(token);
       } else {
         alert(data.message);
       }
@@ -101,7 +107,6 @@ const EditExam = () => {
     }
   };
 
-  // Xóa câu hỏi
   const handleDeleteQuestion = async (questionId) => {
     const token = localStorage.getItem('token');
     try {
@@ -111,7 +116,7 @@ const EditExam = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        fetchQuestions(token); // Cập nhật lại danh sách
+        fetchQuestions(token);
       } else {
         alert(data.message);
       }
@@ -120,7 +125,6 @@ const EditExam = () => {
     }
   };
 
-  // Template cho cột hành động
   const actionTemplate = (rowData) => {
     return (
       <div className="action-buttons">
@@ -138,30 +142,64 @@ const EditExam = () => {
     );
   };
 
+  const imageTemplate = (rowData) => {
+    return rowData.imageUrl ? (
+      <img
+        src={`http://localhost:5000${rowData.imageUrl}`}
+        alt="Question"
+        style={{ width: '100px', height: 'auto' }}
+      />
+    ) : (
+      'Không có hình'
+    );
+  };
+
+  const typeOptions = [
+    { label: 'Bình thường', value: 'normal' },
+    { label: 'Có hình ảnh', value: 'image' },
+  ];
+
+  // Trong component:
+const fileInputRef = useRef(null);
+
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    setSelectedImage(file);
+  }
+};
+
   return (
     <div style={{ padding: '20px' }}>
       <h2>Thêm câu hỏi vào đề: {examName}</h2>
-
-      {/* Nút thêm câu hỏi */}
-      <div  style={{ textAlign: 'right' }}  >
-      <Button
-        label="Thêm câu hỏi"
-        icon="pi pi-plus"
-        onClick={openAddQuestionModal}
-        style={{ marginBottom: '20px' ,marginLeft: '0.5rem', color: '#fffdf4', backgroundColor: '#33b98a', fontWeight: 'bold', borderRadius:'17px', borderColor: 'black', borderWidth: '3px', textAlign: 'center', height: '3rem'}}
-      />
+      <div style={{ textAlign: 'right' }}>
+        <Button
+          label="Thêm câu hỏi"
+          icon="pi pi-plus"
+          onClick={openAddQuestionModal}
+          style={{
+            marginBottom: '20px',
+            marginLeft: '0.5rem',
+            color: '#fffdf4',
+            backgroundColor: '#33b98a',
+            fontWeight: 'bold',
+            borderRadius: '17px',
+            borderColor: 'black',
+            borderWidth: '3px',
+            textAlign: 'center',
+            height: '3rem',
+          }}
+        />
       </div>
-
-      {/* Bảng hiển thị danh sách câu hỏi */}
-      <DataTable value={questions} tableStyle={{ minWidth: '50rem', border: '1px black'}} >
-        <Column field="question" header="Câu hỏi"   alignHeader="center" />
-        <Column field="options" header="Đáp án" body={(rowData) => rowData.options.join(', ')}   alignHeader="center"/>
-        <Column field="correctAnswer" header="Đáp án đúng"   alignHeader="center"/>
-        <Column field="timeLimit" header="Thời gian (giây)"  alignHeader="center"/>
-        <Column header="Hành động" body={actionTemplate}   alignHeader="center"/>
+      <DataTable value={questions} tableStyle={{ minWidth: '50rem', border: '1px black' }}>
+        <Column field="question" header="Câu hỏi" alignHeader="center" />
+        <Column field="options" header="Đáp án" body={(rowData) => rowData.options.join(', ')} alignHeader="center" />
+        <Column field="correctAnswer" header="Đáp án đúng" alignHeader="center" />
+        <Column field="timeLimit" header="Thời gian (giây)" alignHeader="center" />
+        <Column field="type" header="Loại câu hỏi" body={(rowData) => (rowData.type === 'normal' ? 'Bình thường' : 'Có hình ảnh')} alignHeader="center" />
+        <Column header="Hình ảnh" body={imageTemplate} alignHeader="center" />
+        <Column header="Hành động" body={actionTemplate} alignHeader="center" />
       </DataTable>
-
-      {/* Modal thêm/sửa câu hỏi */}
       <Dialog
         header={isEdit ? 'Sửa Câu Hỏi' : 'Thêm Câu Hỏi'}
         visible={visible}
@@ -169,15 +207,80 @@ const EditExam = () => {
         onHide={() => setVisible(false)}
       >
         <div style={{ padding: '1rem' }}>
-          {/* Nội dung câu hỏi */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ fontWeight: 'bold', marginRight: '1rem' }}>Loại câu hỏi:</label>
+            <Dropdown
+              value={currentQuestion.type}
+              options={typeOptions}
+              onChange={(e) => setCurrentQuestion({ ...currentQuestion, type: e.value })}
+              placeholder="Chọn loại câu hỏi"
+              style={{ width: '200px' }}
+            />
+          </div>
           <InputText
             value={currentQuestion.question}
             onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
             placeholder="Nhập nội dung câu hỏi..."
-            style={{ width: '100%', marginBottom: '1.5rem', fontWeight: 'bold'  ,flex: 1, borderRadius:'5px', border: '2px solid black', height: '3.5rem'}}
+            style={{
+              width: '100%',
+              marginBottom: '1.5rem',
+              fontWeight: 'bold',
+              flex: 1,
+              borderRadius: '5px',
+              border: '2px solid black',
+              height: '3.5rem',
+            }}
           />
-
-          {/* Danh sách đáp án */}
+          {currentQuestion.type === 'image' && (
+            <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
+              Chọn hình ảnh:
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              {/* input ẩn */}
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+          
+              {/* Nút trigger input */}
+              <Button
+                label={selectedImage ? "Đã chọn ảnh" : "Tải ảnh lên"}
+                icon="pi pi-upload"
+                className="p-button-outlined"
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  border: '2px solid black',
+                  backgroundColor: '#ffffff',
+                  fontWeight: 'bold',
+                  color: '#333',
+                  borderRadius: '12px',
+                }}
+              />
+          
+              {/* Ảnh preview */}
+              {(selectedImage || currentQuestion.imageUrl) && (
+                <img
+                  src={
+                    selectedImage
+                      ? URL.createObjectURL(selectedImage)
+                      : `http://localhost:5000${currentQuestion.imageUrl}`
+                  }
+                  alt="Preview"
+                  style={{
+                    width: '150px',
+                    height: 'auto',
+                    borderRadius: '10px',
+                    border: '1px solid #ccc',
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          )}
           <div style={{ marginBottom: '1.5rem' }}>
             {currentQuestion.options.map((option, index) => (
               <div
@@ -189,26 +292,20 @@ const EditExam = () => {
                   gap: '0.75rem',
                 }}
               >
-                {/* Chọn đáp án đúng */}
                 <input
                   type="radio"
                   checked={currentQuestion.correctAnswer === option}
                   onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: option })}
                 />
-
-                {/* Nhập nội dung đáp án */}
                 <InputText
                   value={option}
                   onChange={(e) => {
                     const newOptions = [...currentQuestion.options];
                     newOptions[index] = e.target.value;
-
-                    // Nếu đáp án này đang là đáp án đúng → cập nhật luôn
                     let updatedCorrectAnswer = currentQuestion.correctAnswer;
                     if (currentQuestion.correctAnswer === option) {
                       updatedCorrectAnswer = e.target.value;
                     }
-
                     setCurrentQuestion({
                       ...currentQuestion,
                       options: newOptions,
@@ -216,13 +313,11 @@ const EditExam = () => {
                     });
                   }}
                   placeholder={`Đáp án ${String.fromCharCode(65 + index)}`}
-                  style={{ flex: 1, borderRadius:'10px', border: '1px solid black', height: '3rem'}}
+                  style={{ flex: 1, borderRadius: '10px', border: '1px solid black', height: '3rem' }}
                 />
               </div>
             ))}
           </div>
-
-          {/* Thời gian trả lời */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '1rem' }}>
             <label style={{ fontWeight: 'bold' }}>Thời gian:</label>
             <InputNumber
@@ -231,12 +326,10 @@ const EditExam = () => {
               placeholder="Giây"
               min={1}
               max={300}
-              style={{border: '1px solid black'}}
+              style={{ border: '1px solid black' }}
             />
             <span>giây</span>
           </div>
-
-          {/* Nút Lưu */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
             <Button
               label="Lưu Câu Hỏi"
