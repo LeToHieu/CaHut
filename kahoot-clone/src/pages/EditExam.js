@@ -34,7 +34,7 @@ const EditExam = () => {
 
   const fetchQuestions = async (token) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/question/get/${examId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/question/get/${examId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const data = await response.json();
@@ -73,8 +73,8 @@ const EditExam = () => {
   const handleSaveQuestion = async () => {
     const token = localStorage.getItem('token');
     const url = isEdit
-      ? `http://localhost:5000/api/question/edit/${currentQuestion._id}`
-      : 'http://localhost:5000/api/question/create';
+      ? `${process.env.REACT_APP_API_URL}/question/edit/${currentQuestion._id}`
+      : `${process.env.REACT_APP_API_URL}/question/create`;
     const method = isEdit ? 'PUT' : 'POST';
 
     const formData = new FormData();
@@ -110,7 +110,7 @@ const EditExam = () => {
   const handleDeleteQuestion = async (questionId) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:5000/api/question/delete/${questionId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/question/delete/${questionId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -145,7 +145,7 @@ const EditExam = () => {
   const imageTemplate = (rowData) => {
     return rowData.imageUrl ? (
       <img
-        src={`http://localhost:5000${rowData.imageUrl}`}
+        src={`${process.env.REACT_APP_IMAGE_URL}${rowData.imageUrl}`}
         alt="Question"
         style={{ width: '100px', height: 'auto' }}
       />
@@ -267,7 +267,7 @@ const handleImageUpload = (event) => {
                   src={
                     selectedImage
                       ? URL.createObjectURL(selectedImage)
-                      : `http://localhost:5000${currentQuestion.imageUrl}`
+                      : `${process.env.REACT_APP_IMAGE_URL}${currentQuestion.imageUrl}`
                   }
                   alt="Preview"
                   style={{

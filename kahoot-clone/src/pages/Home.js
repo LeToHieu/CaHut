@@ -55,7 +55,7 @@ const Home = () => {
   // Hàm lấy danh sách đề từ backend
   const fetchExams = async (token) => {
     try {
-      const response = await fetch('http://localhost:5000/api/exam/get', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/exam/get`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -76,8 +76,8 @@ const Home = () => {
     const token = localStorage.getItem('token');
 
     const url = isEdit
-      ? `http://localhost:5000/api/exam/edit/${editExamId}`
-      : 'http://localhost:5000/api/exam/create';
+      ? `${process.env.REACT_APP_API_URL}/exam/edit/${editExamId}`
+      : `${process.env.REACT_APP_API_URL}/exam/create`;
     const method = isEdit ? 'PUT' : 'POST';
 
     try {
@@ -108,7 +108,7 @@ const Home = () => {
   const handleDeleteExam = async (examId) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:5000/api/exam/delete/${examId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/exam/delete/${examId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -159,7 +159,7 @@ const Home = () => {
     }
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:5000/api/room/create', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/room/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,7 +187,7 @@ const Home = () => {
     
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:5000/api/room/join', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/room/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ roomId: roomCode }),

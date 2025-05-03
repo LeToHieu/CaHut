@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from 'jwt-decode';
 import '../css/Home.css'; // Dùng lại Home.css chung
 
-const socket = io('http://localhost:5000');
+const socket = io(process.env.REACT_APP_SERVER_URL);
 
 const Quiz = () => {
   const { roomId } = useParams();
@@ -212,17 +212,6 @@ const Quiz = () => {
     return userEntry ? userEntry.score : 0;
   };
 
-  if (loading) {
-    return (
-      <div className="quiz-page">
-        <Card style={{ textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
-          <ProgressSpinner />
-          <p>Đang tải...</p>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="quiz-page">
       <ToastContainer />
@@ -248,7 +237,7 @@ const Quiz = () => {
               {question.type === 'image' && question.imageUrl && (
                 <div className="quiz-image">
                   <img
-                    src={`http://localhost:5000${question.imageUrl}`}
+                    src={`${process.env.REACT_APP_IMAGE_URL}${question.imageUrl}`}
                     alt="Question"
                   />
                 </div>
@@ -288,7 +277,7 @@ const Quiz = () => {
             {showResults.type === 'image' && showResults.imageUrl && (
             <div className="quiz-image">
               <img
-                src={`http://localhost:5000${showResults.imageUrl}`}
+                src={`${process.env.REACT_APP_IMAGE_URL}${showResults.imageUrl}`}
                 alt="Question"/>
               </div>
             )}

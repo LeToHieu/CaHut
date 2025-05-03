@@ -7,7 +7,7 @@ import io from 'socket.io-client';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/Home.css'; // Dùng lại Home.css chung
 
-const socket = io('http://localhost:5000');
+const socket = io(process.env.REACT_APP_SERVER_URL);
 
 const Room = () => {
   const { roomId } = useParams();
