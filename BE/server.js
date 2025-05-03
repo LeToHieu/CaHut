@@ -180,18 +180,20 @@ io.on('connection', (socket) => {
           rank: index + 1,
         }));
 
-      io.to(roomId).emit('show-scores', { leaderboard });
-
-      setTimeout(() => {
-        io.to(roomId).emit('countdown', { countdown: 3 });
-        setTimeout(() => sendNextQuestion(roomId), 3000);
-      }, 3000);
+      // Kiểm tra xem đây có phải là câu hỏi cuối cùng không
+      if (state.currentQuestionIndex + 1 === state.questions.length) {
+        io.to(roomId).emit('game-ended', { leaderboard });
+        delete gameState[roomId];
+      } else {
+        io.to(roomId).emit('show-scores', { leaderboard });
+        setTimeout(() => {
+          io.to(roomId).emit('countdown', { countdown: 3 });
+          setTimeout(() => sendNextQuestion(roomId), 3000);
+        }, 3000);
+      }
     }, 3000);
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
 
   async function sendNextQuestion(roomId) {
     const state = gameState[roomId];
