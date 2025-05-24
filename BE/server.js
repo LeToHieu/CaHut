@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
     try {
       const decoded = jwt.verify(token, 'your_jwt_secret');
-      const room = await Room.findOne({ roomId }).populate('users', 'username');
+      const room = await Room.findOne({ roomId }).populate('users', 'username userImage');
       if (!room) {
         socket.emit('error', { message: 'Phòng không tồn tại' });
         return;
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
       if (room) {
         room.users = room.users.filter((userId) => userId.toString() !== decoded.id);
         await room.save();
-        const updatedRoom = await Room.findOne({ roomId }).populate('users', 'username');
+        const updatedRoom = await Room.findOne({ roomId }).populate('users', 'username userImage');
         socket.leave(roomId);
         io.to(roomId).emit('room-update', {
           roomId: updatedRoom.roomId,
@@ -116,6 +116,7 @@ io.on('connection', (socket) => {
         scores: {},
         answers: {},
         answeredUsers: {},
+        isCorrectForLastQuestion: {},
       };
 
       io.to(roomId).emit('game-started', { roomId });
@@ -128,7 +129,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('submit-answer', async ({ roomId, answer, token }) => {
+  socket.on('submit-answer', async ({ roomId, answer, score, token }) => {
     try {
       const decoded = jwt.verify(token, 'your_jwt_secret');
       const state = gameState[roomId];
@@ -146,7 +147,13 @@ io.on('connection', (socket) => {
       state.answeredUsers[state.currentQuestionIndex].add(decoded.id);
 
       if (!state.scores[decoded.id]) state.scores[decoded.id] = 0;
-      if (isCorrect) state.scores[decoded.id] += 10;
+      if (isCorrect){
+        state.scores[decoded.id] += score;
+        state.isCorrectForLastQuestion[decoded.id] = true
+      }else{
+        state.isCorrectForLastQuestion[decoded.id] = false
+      }
+      console.log(score);
     } catch (err) {
       socket.emit('error', { message: 'Lỗi khi gửi câu trả lời' });
     }
@@ -167,12 +174,14 @@ io.on('connection', (socket) => {
     });
 
     setTimeout(async () => {
-      const room = await Room.findOne({ roomId }).populate('users', 'username');
+      const room = await Room.findOne({ roomId }).populate('users', 'username userImage');
       const leaderboard = room.users
         .map((user) => ({
           id: user._id.toString(),
           username: user.username,
+          userImage: user.userImage,
           score: state.scores[user._id] || 0,
+          isCorrectForLastQuestion: state.isCorrectForLastQuestion[user._id],
         }))
         .sort((a, b) => b.score - a.score)
         .map((entry, index) => ({
@@ -207,12 +216,14 @@ io.on('connection', (socket) => {
         totalQuestions: state.questions.length,
       });
     } else {
-      const room = await Room.findOne({ roomId }).populate('users', 'username');
+      const room = await Room.findOne({ roomId }).populate('users', 'username userImage');
       const leaderboard = room.users
         .map((user) => ({
           id: user._id.toString(),
           username: user.username,
+          userImage: user.userImage,
           score: state.scores[user._id] || 0,
+          isCorrectForLastQuestion: state.isCorrectForLastQuestion[user._id],
         }))
         .sort((a, b) => b.score - a.score)
         .map((entry, index) => ({

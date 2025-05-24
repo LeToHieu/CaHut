@@ -5,6 +5,13 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true},
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  userImage: { 
+    type: Number, 
+    required: true, 
+    default: 1, 
+    min: 1, 
+    max: 12 
+  },
 });
 
 // Mã hóa mật khẩu trước khi lưu
