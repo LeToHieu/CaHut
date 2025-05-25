@@ -8,6 +8,7 @@ import Room from './pages/Room';
 import Quiz from './pages/Quiz';
 import EditProfile from './pages/EditProfile';
 import ResetPassword from './pages/ResetPassword';
+import BotController from './pages/BotController';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -21,6 +22,7 @@ const App = () =>{
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/bot-controller" element={<BotController />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/home" element={<Home />} />
