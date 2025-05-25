@@ -149,28 +149,31 @@ const Quiz = () => {
           token: localStorage.getItem('token'),
         });
       }
-      socket.emit('time-up', { roomId });
+      if (isCreator) { // Chỉ host gửi time-up
+        socket.emit('time-up', { roomId, token: localStorage.getItem('token') });
+      }
     }
-  }, [timeLeft, question, selectedAnswer, roomId]);
+  }, [timeLeft, question, selectedAnswer, roomId, isCreator]);
 
   const handleAnswer = (answer) => {
     if (selectedAnswer) return;
     setSelectedAnswer(answer);
-    // Tính điểm dựa trên thời gian còn lại
-    const totalTime = question?.timeLimit || 1; // Tổng thời gian giới hạn
-    const timeRatio = timeLeft / totalTime; // Tỷ lệ thời gian còn lại (0 đến 1)
-    const maxScore = 1000; // Điểm tối đa
-    const score = Math.round(maxScore * timeRatio); // Điểm = Điểm tối đa * Tỷ lệ thời gian
+    const totalTime = question?.timeLimit || 1;
+    const timeRatio = timeLeft / totalTime;
+    const maxScore = 1000;
+    const score = Math.round(maxScore * timeRatio);
     socket.emit('submit-answer', {
       roomId,
       answer,
-      score, // Gửi điểm tính toán
+      score,
       token: localStorage.getItem('token'),
     });
   };
 
   const handleSkipQuestion = () => {
-    socket.emit('time-up', { roomId });
+    if (isCreator) { // Chỉ host gửi time-up
+      socket.emit('time-up', { roomId, token: localStorage.getItem('token') });
+    }
   };
 
   const handleDeleteRoom = () => {
