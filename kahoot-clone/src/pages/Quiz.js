@@ -145,6 +145,7 @@ const Quiz = () => {
         socket.emit('submit-answer', {
           roomId,
           answer: '',
+          score: 0,
           token: localStorage.getItem('token'),
         });
       }
@@ -155,9 +156,15 @@ const Quiz = () => {
   const handleAnswer = (answer) => {
     if (selectedAnswer) return;
     setSelectedAnswer(answer);
+    // Tính điểm dựa trên thời gian còn lại
+    const totalTime = question?.timeLimit || 1; // Tổng thời gian giới hạn
+    const timeRatio = timeLeft / totalTime; // Tỷ lệ thời gian còn lại (0 đến 1)
+    const maxScore = 1000; // Điểm tối đa
+    const score = Math.round(maxScore * timeRatio); // Điểm = Điểm tối đa * Tỷ lệ thời gian
     socket.emit('submit-answer', {
       roomId,
       answer,
+      score, // Gửi điểm tính toán
       token: localStorage.getItem('token'),
     });
   };
@@ -220,7 +227,6 @@ const Quiz = () => {
       />
     );
   };
-
 
   return (
     <div className="quiz-page">
