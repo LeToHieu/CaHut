@@ -267,12 +267,12 @@
 /* Màu cho từng đáp án */
 .option-a {
   background-color: #60a5fa;
-  color: white;
+  color: black;
 }
 
 .option-b {
   background-color: #34d399;
-  color: white;
+  color: black;
 }
 
 .option-c {
@@ -282,7 +282,7 @@
 
 .option-d {
   background-color: #f87171;
-  color: white;
+  color: black;
 }
 
 
@@ -361,6 +361,9 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+  }
+  .quiz-options {
+    grid-template-columns: 1fr;
   }
 }
 

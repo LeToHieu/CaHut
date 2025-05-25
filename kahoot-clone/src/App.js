@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import EditExam from './pages/EditExam';
 import Room from './pages/Room';
 import Quiz from './pages/Quiz';
+import EditProfile from './pages/EditProfile';
+
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -20,6 +22,7 @@ const App = () =>{
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/edit-exam/:examName/:examId" element={<EditExam />} />
                 <Route path="/quiz/:roomId" element={<Quiz />} />
                 <Route path="/room/:roomId" element={<Room />} />

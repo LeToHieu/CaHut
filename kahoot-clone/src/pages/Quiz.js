@@ -9,7 +9,6 @@ import { Column } from 'primereact/column';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { jwtDecode } from 'jwt-decode';
-import '../css/Home.css'; // Dùng lại Home.css chung
 
 const socket = io(process.env.REACT_APP_SERVER_URL);
 
@@ -212,6 +211,17 @@ const Quiz = () => {
     return userEntry ? userEntry.score : 0;
   };
 
+  const imageTemplate = (rowData) => {
+    return (
+      <img
+        src={require(`../res/${rowData.userImage}.png`)} 
+        alt={rowData.username}
+        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+      />
+    );
+  };
+
+
   return (
     <div className="quiz-page">
       <ToastContainer />
@@ -228,22 +238,15 @@ const Quiz = () => {
         )
       ) : question ? (
         <>
-          <div className="quiz-container">
-            <div className="quiz-content">
-              <div className="quiz-text">
-                <div className="quiz-question">{question.question}</div>
-                <div className="quiz-timer">⏳ Thời gian còn lại: {timeLeft} giây</div>
-              </div>
-              {question.type === 'image' && question.imageUrl && (
-                <div className="quiz-image">
-                  <img
-                    src={`${process.env.REACT_APP_IMAGE_URL}${question.imageUrl}`}
-                    alt="Question"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
+          {question.type === 'image' && question.imageUrl && (
+            <img
+              src={`http://localhost:5000${question.imageUrl}`}
+              alt="Question"
+              style={{ maxWidth: '300px', height: 'auto', marginBottom: '1rem' }}
+            />
+          )}
+          <div className="quiz-question">{question.question}</div>
+          <div className="quiz-timer">⏳ Thời gian còn lại: {timeLeft} giây</div>
           <div className="quiz-options">
             {question.options.map((option, index) => (
               <button
@@ -269,20 +272,14 @@ const Quiz = () => {
         </>
       ) : showResults ? (
         <>
-        <div className="quiz-container">
-          <div className="quiz-content">
-            <div className="quiz-text">
-              <div className="quiz-question">{showResults.question}</div>
-            </div>
-            {showResults.type === 'image' && showResults.imageUrl && (
-            <div className="quiz-image">
-              <img
-                src={`${process.env.REACT_APP_IMAGE_URL}${showResults.imageUrl}`}
-                alt="Question"/>
-              </div>
-            )}
-            </div>
-          </div>
+          {showResults.type === 'image' && showResults.imageUrl && (
+            <img
+              src={`http://localhost:5000${showResults.imageUrl}`}
+              alt="Question"
+              style={{ maxWidth: '300px', height: 'auto', marginBottom: '1rem' }}
+            />
+          )}
+          <div className="quiz-question">{showResults.question}</div>
           <div className="quiz-options">
             {showResults.options.map((option, index) => (
               <button
@@ -305,6 +302,7 @@ const Quiz = () => {
           </div>
           <DataTable value={showScores} className="result-table" tableStyle={{ width: '100%' }}>
             <Column field="rank" header="Hạng" alignHeader="center" />
+            <Column header="Hình" body={imageTemplate} alignHeader="center" />
             <Column field="username" header="Người chơi" alignHeader="center" />
             <Column field="score" header="Điểm" alignHeader="center" />
           </DataTable>
@@ -317,6 +315,7 @@ const Quiz = () => {
           </div>
           <DataTable value={leaderboard} className="result-table" tableStyle={{ width: '100%' }}>
             <Column field="rank" header="Hạng" alignHeader="center" />
+            <Column header="Hình" body={imageTemplate} alignHeader="center" />
             <Column field="username" header="Người chơi" alignHeader="center" />
             <Column field="score" header="Điểm" alignHeader="center" />
           </DataTable>
