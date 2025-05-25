@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../css/Login.css'; // dùng lại CSS từ Login
 
 const Register = () => {
@@ -7,15 +9,11 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
   const navigate = useNavigate();
 
   const handleRegister = async () => {
     if (email.trim() === '' || password.trim() === '' || username.trim() === '') {
-      setToastMsg('Vui lòng nhập đầy đủ thông tin');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      toast.error('Vui lòng nhập đầy đủ thông tin', { autoClose: 3000 });
       return;
     }
 
@@ -27,18 +25,16 @@ const Register = () => {
     const data = await response.json();
 
     if (response.status === 201) {
+      toast.success('Đăng ký thành công!', { autoClose: 3000 });
       navigate('/login');
     } else {
-      setToastMsg(data.message || 'Đăng ký thất bại');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      toast.error(data.message || 'Đăng ký thất bại', { autoClose: 3000 });
     }
   };
 
   return (
     <div className="auth-page">
-      {showToast && <div className="custom-toast show">{toastMsg}</div>}
-
+      <ToastContainer position="top-right" />
       <div className="auth-box">
         <h2 style={{ textAlign: 'center' }}>Tạo tài khoản</h2>
 

@@ -7,6 +7,7 @@ import EditExam from './pages/EditExam';
 import Room from './pages/Room';
 import Quiz from './pages/Quiz';
 import EditProfile from './pages/EditProfile';
+import ResetPassword from './pages/ResetPassword';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -21,6 +22,7 @@ const App = () =>{
                 <Route path="/" element={<Login />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/edit-exam/:examName/:examId" element={<EditExam />} />
