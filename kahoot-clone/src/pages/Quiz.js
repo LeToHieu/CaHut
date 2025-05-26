@@ -249,7 +249,7 @@ const Quiz = () => {
         <>
           {question.type === 'image' && question.imageUrl && (
             <img
-              src={`http://localhost:5000${question.imageUrl}`}
+              src={`${process.env.REACT_APP_IMAGE_URL}${question.imageUrl}`}
               alt="Question"
               style={{ maxWidth: '300px', height: 'auto', marginBottom: '1rem' }}
             />
@@ -283,7 +283,7 @@ const Quiz = () => {
         <>
           {showResults.type === 'image' && showResults.imageUrl && (
             <img
-              src={`http://localhost:5000${showResults.imageUrl}`}
+              src={`${process.env.REACT_APP_IMAGE_URL}${showResults.imageUrl}`}
               alt="Question"
               style={{ maxWidth: '300px', height: 'auto', marginBottom: '1rem' }}
             />
